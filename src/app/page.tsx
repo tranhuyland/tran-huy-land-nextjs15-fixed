@@ -1,19 +1,33 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
-import { Search, MapPin, DollarSign, Building, ArrowRight, Star, Heart, Calendar } from "lucide-react";
+import { Search, MapPin, DollarSign, Building, ArrowRight, Star, Heart } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+
+// Định nghĩa kiểu dữ liệu cho một bất động sản
+interface Property {
+  id: number;
+  title: string;
+  type: string;
+  location: string;
+  price: number;
+  image: string;
+  beds: number;
+  baths: number;
+  area: number;
+  featured: boolean;
+}
 
 // 1. CHUYỂN TOÀN BỘ LOGIC VÀ GIAO DIỆN TRANG CHỦ VÀO COMPONENT NÀY
 function HomeContent() {
   const searchParams = useSearchParams();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedType, setSelectedType] = useState("all");
-  const [selectedPrice, setSelectedPrice] = useState("all");
-  const [favorites, setFavorites] = useState([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selectedType, setSelectedType] = useState<string>("all");
+  const [selectedPrice, setSelectedPrice] = useState<string>("all");
+  const [favorites, setFavorites] = useState<number[]>([]);
 
   // Mock data cho danh sách bất động sản
-  const properties = [
+  const properties: Property[] = [
     {
       id: 1,
       title: "Căn Hộ Cao Cấp Ocean View",
@@ -60,13 +74,15 @@ function HomeContent() {
     if (priceParam) setSelectedPrice(priceParam);
   }, [searchParams]);
 
-  const toggleFavorite = (id) => {
-    setFavorites(prev => 
-      prev.includes(id) ? prev.filter(favId => favId !== id) : [...prev, id]
+  // Sửa lỗi Type error: Định nghĩa kiểu number cho id và favId
+  const toggleFavorite = (id: number) => {
+    setFavorites((prev: number[]) => 
+      prev.includes(id) ? prev.filter((favId: number) => favId !== id) : [...prev, id]
     );
   };
 
-  const formatPrice = (price) => {
+  // Sửa lỗi Type error: Định nghĩa kiểu number cho price
+  const formatPrice = (price: number): string => {
     if (price >= 1000000000) {
       return `${(price / 1000000000).toFixed(1)} Tỷ`;
     }
@@ -103,14 +119,14 @@ function HomeContent() {
                   placeholder="Nhập khu vực, tên dự án..." 
                   className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
                 />
               </div>
               <div className="w-full md:w-48">
                 <select 
                   className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                   value={selectedType}
-                  onChange={(e) => setSelectedType(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedType(e.target.value)}
                 >
                   <option value="all">Tất cả loại hình</option>
                   <option value="apartment">Căn hộ</option>
@@ -139,7 +155,7 @@ function HomeContent() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {properties.map((property) => (
+          {properties.map((property: Property) => (
             <div key={property.id} className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 border border-gray-100">
               <div className="relative h-64 w-full bg-gray-200">
                 <img 
